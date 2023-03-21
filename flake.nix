@@ -18,7 +18,7 @@
       imports = [nci.flakeModule ];
       perSystem = {config,pkgs, ...}: let
         # TODO: change this to your crate's name
-        crateName = "my-crate";
+        crateName = "ncifinance";
         # shorthand for accessing this crate's outputs
         # you can access crate outputs under `config.nci.outputs.<crate name>` (see documentation)
         crateOutputs = config.nci.outputs.${crateName};

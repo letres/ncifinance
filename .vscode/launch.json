@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'nix-flake-rust-nightly-vscode'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=nix-flake-rust-nightly-vscode",
+                    "--package=nix-flake-rust-nightly-vscode"
+                ],
+                "filter": {
+                    "name": "nix-flake-rust-nightly-vscode",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'nix-flake-rust-nightly-vscode'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=nix-flake-rust-nightly-vscode",
+                    "--package=nix-flake-rust-nightly-vscode"
+                ],
+                "filter": {
+                    "name": "nix-flake-rust-nightly-vscode",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
