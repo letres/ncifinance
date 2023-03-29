@@ -1,4 +1,4 @@
-use barter::{
+ use barter::{
     data::historical,
     engine::{trader::Trader, Engine},
     event::{Event, EventTx},
@@ -14,21 +14,20 @@ use barter::{
         trading::{Config as StatisticConfig, TradingSummary},
         Initialiser,
     },
-    strategy::example::{Config as StrategyConfig, RSIStrategy},
 };
-use barter_data::event::{DataKind, MarketEvent};
-use barter_data::subscription::candle::Candle;
+use barter_data::model::{Candle, DataKind, MarketEvent};
 use barter_integration::model::{Exchange, Instrument, InstrumentKind, Market};
-use chrono::Utc;
 use parking_lot::Mutex;
 use std::{collections::HashMap, fs, sync::Arc};
 use tokio::sync::mpsc;
 use uuid::Uuid;
+extern crate chrono;
+use chrono::{DateTime, NaiveDateTime, Utc};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
+
+use crate::custom_strategy::{WeightConfig, WeightedStrategy};
 
 mod custom_strategy;
-use crate::custom_strategy::custom_strategy::{WeightConfig, WeightedStrategy};
-
-const DATA_HISTORIC_CANDLES_1H: &str = "data/candles_1h.json";
 
 #[tokio::main]
 async fn main() {
@@ -114,7 +113,7 @@ async fn main() {
         .traders(traders)
         .trader_command_txs(trader_command_txs)
         .statistics_summary(TradingSummary::init(StatisticConfig {
-            starting_equity: 1000.0,
+            starting_equity: 10_000.0,
             trading_days_per_year: 365,
             risk_free_return: 0.0,
         }))
@@ -126,8 +125,8 @@ async fn main() {
     engine.run().await;
 }
 
-fn load_json_market_event_candles() -> Vec<MarketEvent<DataKind>> {
-    let candles = fs::read_to_string(DATA_HISTORIC_CANDLES_1H).expect("failed to read file");
+fn load_json_market_event_candles() -> Vec<MarketEvent> {
+    let candles = fs::read_to_string("./data/candles_1h.json").expect("failed to read file");
 
     let candles =
         serde_json::from_str::<Vec<Candle>>(&candles).expect("failed to parse candles String");
@@ -135,7 +134,7 @@ fn load_json_market_event_candles() -> Vec<MarketEvent<DataKind>> {
     candles
         .into_iter()
         .map(|candle| MarketEvent {
-            exchange_time: candle.close_time,
+            exchange_time: candle.end_time,
             received_time: Utc::now(),
             exchange: Exchange::from("binance"),
             instrument: Instrument::from(("btc", "usdt", InstrumentKind::Spot)),
@@ -154,37 +153,30 @@ async fn listen_to_engine_events(mut event_rx: mpsc::UnboundedReceiver<Event>) {
             }
             Event::Signal(signal) => {
                 // Signal Event occurred in Engine
-                println!("{signal:?}");
             }
             Event::SignalForceExit(_) => {
                 // SignalForceExit Event occurred in Engine
             }
             Event::OrderNew(new_order) => {
                 // OrderNew Event occurred in Engine
-                println!("{new_order:?}");
             }
             Event::OrderUpdate => {
                 // OrderUpdate Event occurred in Engine
             }
             Event::Fill(fill_event) => {
                 // Fill Event occurred in Engine
-                println!("{fill_event:?}");
             }
             Event::PositionNew(new_position) => {
                 // PositionNew Event occurred in Engine
-                println!("{new_position:?}");
             }
             Event::PositionUpdate(updated_position) => {
                 // PositionUpdate Event occurred in Engine
-                println!("{updated_position:?}");
             }
             Event::PositionExit(exited_position) => {
                 // PositionExit Event occurred in Engine
-                println!("{exited_position:?}");
             }
             Event::Balance(balance_update) => {
                 // Balance update Event occurred in Engine
-                println!("{balance_update:?}");
             }
         }
     }

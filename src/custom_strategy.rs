@@ -1,6 +1,8 @@
+pub mod custom_strategy {
+
 use barter::data::MarketMeta;
 use barter::strategy::{Decision, Signal, SignalGenerator, SignalStrength};
-use barter_data::model::{DataKind, MarketEvent};
+use barter_data::event::{DataKind, MarketEvent};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -8,6 +10,8 @@ use ta::{
     indicators::{FastStochastic, RelativeStrengthIndex},
     Next,
 };
+
+
 
 /// Configuration for constructing a [`WeightedStrategy`]
 /// via the new() constructor method.
@@ -34,7 +38,7 @@ pub struct WeightedStrategy {
 }
 
 impl SignalGenerator for WeightedStrategy {
-    fn generate_signal(&mut self, market: &MarketEvent) -> Option<Signal> {
+    fn generate_signal(&mut self, market: &MarketEvent<DataKind>) -> Option<Signal> {
         // Check if it's a MarketEvent with a candle
         let candle_close = match &market.kind {
             DataKind::Candle(candle) => candle.close,
@@ -169,4 +173,5 @@ impl WeightedStrategy {
     fn calculate_signal_strength(&self) -> SignalStrength {
         SignalStrength(1.0)
     }
+}
 }
