@@ -136,7 +136,7 @@ fn load_json_market_event_candles() -> Vec<MarketEvent<DataKind>> {
         .into_iter()
         .map(|candle| MarketEvent {
             exchange_time: candle.close_time,
-            received_time: Utc::now(),
+            received_time: candle.close_time,
             exchange: Exchange::from("binance"),
             instrument: Instrument::from(("btc", "usdt", InstrumentKind::Spot)),
             kind: DataKind::Candle(candle),
@@ -154,37 +154,37 @@ async fn listen_to_engine_events(mut event_rx: mpsc::UnboundedReceiver<Event>) {
             }
             Event::Signal(signal) => {
                 // Signal Event occurred in Engine
-                println!("{signal:?}");
+                //println!("{signal:?}");
             }
             Event::SignalForceExit(_) => {
                 // SignalForceExit Event occurred in Engine
             }
             Event::OrderNew(new_order) => {
                 // OrderNew Event occurred in Engine
-                println!("{new_order:?}");
+                //println!("{new_order:?}");
             }
             Event::OrderUpdate => {
                 // OrderUpdate Event occurred in Engine
             }
             Event::Fill(fill_event) => {
                 // Fill Event occurred in Engine
-                println!("{fill_event:?}");
+                //println!("{fill_event:?}");
             }
             Event::PositionNew(new_position) => {
                 // PositionNew Event occurred in Engine
-                println!("{new_position:?}");
+                //println!("{new_position:?}");
             }
             Event::PositionUpdate(updated_position) => {
                 // PositionUpdate Event occurred in Engine
-                println!("{updated_position:?}");
+                //println!("{updated_position:?}");
             }
             Event::PositionExit(exited_position) => {
                 // PositionExit Event occurred in Engine
-                println!("{exited_position:?}");
+                //println!("{exited_position:?}");
             }
             Event::Balance(balance_update) => {
                 // Balance update Event occurred in Engine
-                println!("{balance_update:?}");
+                //println!("{balance_update:?}");
             }
         }
     }

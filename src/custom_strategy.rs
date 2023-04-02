@@ -134,7 +134,8 @@ impl WeightedStrategy {
                             trigger: vals.2,
                         },
                         Indicator::Fs(
-                            FastStochastic::new(vals.0).expect("Failed to construct Fs indicator"),
+                            FastStochastic::new(vals.0)
+                            .expect("Failed to construct Fs indicator"),
                         ),
                     ));
                 }
@@ -150,7 +151,7 @@ impl WeightedStrategy {
         }
     }
 
-    /// Given the latest RSI value for a symbol, generates a map containing the [`SignalStrength`] for
+    /// Given the latest Indicator value for a symbol, generates a map containing the [`SignalStrength`] for
     /// [`Decision`] under consideration.
     fn generate_signals_map(&self) -> HashMap<Decision, SignalStrength> {
         let mut signals = HashMap::with_capacity(4);
@@ -160,12 +161,12 @@ impl WeightedStrategy {
         if self.indicator > self.sell.0 {
             signals.insert(Decision::CloseLong, self.calculate_signal_strength());
         }
-        if self.indicator > self.trigger.1 {
-            signals.insert(Decision::Short, self.calculate_signal_strength());
-        }
-        if self.indicator < self.sell.1 {
-            signals.insert(Decision::CloseShort, self.calculate_signal_strength());
-        }
+        // if self.indicator > self.trigger.1 {
+        //     signals.insert(Decision::Short, self.calculate_signal_strength());
+        // }
+        // if self.indicator < self.sell.1 {
+        //     signals.insert(Decision::CloseShort, self.calculate_signal_strength());
+        // }
         signals
     }
 

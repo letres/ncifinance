@@ -33,7 +33,11 @@
           # export crate (packages and devshell) in flake outputs
           # alternatively you can access the outputs and export them yourself (see below)
           export = true;
+          runtimeLibs = [pkgs.openssl pkgs.pkg-config];
           overrides.add-inputs.overrideAttrs = old: {
+              buildInputs = (old.buildInputs or []) ++ [pkgs.openssl pkgs.pkg-config];
+          };
+          depsOverrides.add-inputs.overrideAttrs = old: {
               buildInputs = (old.buildInputs or []) ++ [pkgs.openssl pkgs.pkg-config];
           };
           # look at documentation for more options
