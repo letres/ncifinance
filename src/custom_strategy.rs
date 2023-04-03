@@ -64,6 +64,14 @@ impl SignalGenerator for WeightedStrategy {
             DataKind::Candle(candle) => candle.trade_count,
             _ => return None,
         };
+        let item = DataItem::builder()
+            .open(candle_open)
+            .high(candle_high)
+            .low(candle_low)
+            .close(candle_close)
+            .volume(candle_volume)
+            .build()
+            .unwrap();
         //TODO:Loop through all indicators and Weigh them???
         //Something with Constant?? eventually
         //create a better function(linear??)
@@ -74,8 +82,7 @@ impl SignalGenerator for WeightedStrategy {
         for x in 0..self.config.len() {
             weight = self.config[x].0.weight;
             match &mut self.config[x].1 {
-                Indicator::Rsi(fun) => self.indicator += weight * fun.next(candle_close),
-                Indicator::Fs(fun) => self.indicator += weight * fun.next(candle_close),
+                Indicator(fun) => self.indicator += weight * fun.next(candle_close),
                 _ => return None,
             }
         }
