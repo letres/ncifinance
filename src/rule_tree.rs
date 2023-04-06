@@ -23,8 +23,8 @@ enum Comparison {
 }
 
 struct ComparisonNode {
-    pub left: Box<NodeCalc>,
-    pub right: Box<NodeCalc>,
+    pub left: Box<L:NodeCalc>,
+    pub right: Box<R:NodeCalc>,
     pub comparison: Comparison,
 }
 
@@ -84,6 +84,8 @@ impl NodeCalc for IndicatorNode{
     }
     fn update_calc(&mut self,_:T){}
 }   
+
+
 //TODO:Max and Min is equivilent to (N)Or
 
 
@@ -93,7 +95,8 @@ struct Multiply {
     pub right: Box<Node>,
 }
 
-//TODO: This will do some nice things
+//TODO: This should be able to help a lot of smoothing to allow a better
+//Surface to optimize on
 struct Average {
     pub nodes: Vec<Box<Node>>,
 }
