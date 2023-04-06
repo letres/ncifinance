@@ -23,23 +23,12 @@ pub mod custom_strategy {
         pub weight: f64,
         pub trigger: (f64, f64),
     }
-    //implemenmt things for each different indicator
-    // #[derive(Clone, Debug)]
-    // pub struct Indicator< T:ta::Next< T,Output=f64>>(T);
 
-    trait NewTrait<T: ta::Close>: for<'a> ta::Next<&'a T, Output = f64> + Debug + Send {}
-    impl<DataItem> NewTrait<DataItem> for RelativeStrengthIndex
-    where
-        RelativeStrengthIndex: for<'a> ta::Next<&'a DataItem, Output = f64>,
-        DataItem: ta::Close,
-    {
-    }
-    impl<DataItem> NewTrait<DataItem> for FastStochastic
-    where
-        FastStochastic: for<'a> ta::Next<&'a DataItem, Output = f64>,
-        DataItem: ta::Close + ta::High + ta::Low,
-    {
-    }
+    trait DataTick: ta::Open + ta::High + ta::Low + ta::Close {}
+    trait NewTrait<T>: for<'a> ta::Next<&'a T, Output = f64> + Debug + Send {}
+    impl<DataItem: DataTick> NewTrait<DataItem> for RelativeStrengthIndex {}
+    impl<DataItem: DataTick> NewTrait<DataItem> for FastStochastic {}
+    impl DataTick for DataItem{}
 
     #[derive(Debug)]
     /// strategy that implements [`SignalGenerator`].
@@ -117,10 +106,10 @@ pub mod custom_strategy {
         }
     }
 
-    impl<DataItem: ta::Close + ta::Low + ta::High> WeightedStrategy<DataItem>
+    impl<DataItem> WeightedStrategy<DataItem>
     where
         RelativeStrengthIndex: for<'a> ta::Next<&'a DataItem, Output = f64>,
-        DataItem: ta::Close,
+        DataItem: DataTick,
     {
         /// Constructs a new [`WeightedStrategy`] component using the
         /// provided configuration struct.
