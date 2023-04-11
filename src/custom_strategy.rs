@@ -24,11 +24,16 @@ pub mod custom_strategy {
         pub trigger: (f64, f64),
     }
 
-    trait DataTick: ta::Open + ta::High + ta::Low + ta::Close {}
+    trait DataTick: ta::Open + ta::High + ta::Low + ta::Close + ta::Volume {}
+
+    impl DataTick for DataItem {}
+
     trait NewTrait<T>: for<'a> ta::Next<&'a T, Output = f64> + Debug + Send {}
-    impl<DataItem: DataTick> NewTrait<DataItem> for RelativeStrengthIndex {}
-    impl<DataItem: DataTick> NewTrait<DataItem> for FastStochastic {}
-    impl DataTick for DataItem{}
+
+    impl<DataItem: DataTick, T> NewTrait<DataItem> for T where
+        T: for<'a> ta::Next<&'a DataItem, Output = f64> + Debug + Send
+    {
+    }
 
     #[derive(Debug)]
     /// strategy that implements [`SignalGenerator`].
